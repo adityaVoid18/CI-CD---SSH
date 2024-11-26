@@ -1,0 +1,23 @@
+mage: yourDockerImage
+
+pipelines:
+  custom:   
+    DEMO-Transaction:
+      - step:
+          name: Build Transaction Module for DEMO
+          size: 2x
+          script:
+            - export MODULE_NAME="Transaction"
+            - chmod +x ./Scripts/build_module.sh
+            - ./Scripts/build_module.sh "$MODULE_NAME"
+            - echo "Checking contents of $MODULE_NAME/publish/..."
+            - ls -R Transaction/publish/
+          artifacts:
+            - Transaction/publish/**
+      - step:
+          name: Deploy Transaction Module for DEMO
+          size: 2x
+          script:
+            - export MODULE_NAME="Transaction"
+            - chmod +x ./Scripts/deploy_module.sh
+            - ./Scripts/deploy_module.sh "$MODULE_NAME" "$SSH_KEY" "$DEV_SERVER_IP" "22" "$DEV_REMOTE_PATH"
